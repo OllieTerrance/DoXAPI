@@ -31,12 +31,23 @@ if ($_POST["submit"]) {
     }
     if ($success) {
         $_SESSION["auth"] = array("email" => $email);
-?>{ "success": "<? print($success); ?>" }<?
+?>{
+    "success": "<? print($success); ?>"
+}<?
     } elseif ($error) {
-?>{ "error": "<? print($error); ?>" }<?
+?>{
+    "error": "<? print($error); ?>"
+}<?
     }
-} elseif ($_GET["submit"] === "logout") {
-    session_destroy();
-?>{ "success": "You have been logged out." }<?
+} elseif ($_REQUEST["submit"] === "logout") {
+    if ($_SESSION["auth"]) {
+        session_destroy();
+?>{
+    "success": "You have been logged out."
+}<?
+    } else {
+?>{
+    "error": "You don't appear to be logged in."
+}<?
+    }
 }
-?>
