@@ -1,6 +1,6 @@
-<?
+<?php
 require("/home/pi/www/lib/keystore.php");
-$conn = mysqli_connect(keystore("mysql", "db"), keystore("mysql", "user"), keystore("mysql", "pass"), "dox_cloud");
+$conn = mysqli_connect(keystore("mysql", "db"), keystore("mysql", "user"), keystore("mysql", "pass"), "dox_api");
 session_start();
 if ($_POST["submit"]) {
     $email = $_POST["email"];
@@ -21,6 +21,7 @@ if ($_POST["submit"]) {
                 $row = mysqli_fetch_assoc($data);
                 if (md5($pass) === $row["pass"]) {
                     $success = "Awesome, you're now logged in!";
+                    $uid = $row["uid"];
                 } else {
                     $error = "That password seems to be incorrect.";
                 }
@@ -33,6 +34,7 @@ if ($_POST["submit"]) {
             } else {
                 if (mysqli_query($conn, "INSERT INTO `users` (`email`, `pass`) VALUES (\"" . $email . "\", \"" . md5($pass) . "\");")) {
                     $success = "Boom, your account has been created!";
+                    $uid = mysqli_insert_id($conn);
                 } else {
                     $error = "Oops, something went wrong there...";
                 }
@@ -48,7 +50,7 @@ if ($_POST["submit"]) {
     }
     header("Content-Type: application/json");
     if ($success) {
-        $_SESSION["auth"] = array("email" => $email);
+        $_SESSION["auth"] = array("uid" => $uid, "email" => $email);
 ?>{
     "success": "<? print($success); ?>"
 }<?
