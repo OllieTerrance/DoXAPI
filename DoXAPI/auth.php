@@ -14,7 +14,7 @@ if ($_POST["submit"]) {
     } elseif (strlen($pass) < 4) {
         $error = "Your password is too short – make it at least 4 characters.";
     } else {
-        $data = mysqli_query($conn, "SELECT * FROM `users` WHERE LOWER(`email`) = \"" . strtolower($email) . "\";");
+        $data = mysqli_query($conn, "SELECT * FROM `users` WHERE LOWER(`email`) = \"" . strtolower(mysqli_real_escape_string($conn, $email)) . "\";");
         $num = mysqli_num_rows($data);
         if ($_POST["submit"] === "login") {
             if ($num) {
@@ -32,7 +32,7 @@ if ($_POST["submit"]) {
             if ($num) {
                 $error = "There's already an account registered with that email address.";
             } else {
-                if (mysqli_query($conn, "INSERT INTO `users` (`email`, `pass`) VALUES (\"" . $email . "\", \"" . md5($pass) . "\");")) {
+                if (mysqli_query($conn, "INSERT INTO `users` (`email`, `pass`) VALUES (\"" . mysqli_real_escape_string($conn, $email) . "\", \"" . md5($pass) . "\");")) {
                     $success = "Boom, your account has been created!";
                     $uid = mysqli_insert_id($conn);
                 } else {
